@@ -1,5 +1,11 @@
 import { MongoClient } from 'mongodb';
 
+type FilmeType = {
+    title: string;
+    year: number;
+    director: string;
+}
+
 export default class MongoDB {
   private uri: string;
 
@@ -18,16 +24,29 @@ export default class MongoDB {
     await this.client.close();
   }
 
-  async insertOne(collectionName: string, document: any) {
+  async insertFilme(filme: FilmeType) {
     const database = this.client.db('test');
-    const collection = database.collection(collectionName);
-    await collection.insertOne(document);
+    const collection = database.collection('filme');
+    await collection.insertOne(filme);
   }
 
-  async find(collectionName: string, query: any) {
+  async find(query: any) {
     const database = this.client.db('test');
-    const collection = database.collection(collectionName);
+    const collection = database.collection('filme');
     const response = await collection.find(query).toArray();
     return response;
+  }
+
+  async delete(query: any) {
+    const database = this.client.db('test');
+    const collection = database.collection('filme');
+    const response = await collection.deleteOne(query);
+    return response;
+  }
+
+  async update(query: any, filme: FilmeType) {
+    const database = this.client.db('test');
+    const collection = database.collection('filme');
+    collection.updateOne(query, filme);
   }
 }
